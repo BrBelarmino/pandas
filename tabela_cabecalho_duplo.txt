@@ -1,0 +1,21 @@
+import pandas as pd
+
+# Carregar a tabela do arquivo Excel
+df = pd.read_excel('tabela_a.xlsx', header=[0,1], sheet_name='Plan1')
+
+# Restabelecer o índice para tornar todas as colunas de nível superior
+df.columns = [' '.join(col).strip() for col in df.columns.values]
+
+# Verticalizar a tabela
+df_melted = df.melt(id_vars=['Loja', 'Vendedor', 'Produto'], 
+                    var_name=['Diretor Comercial', 'Nível de Desconto'], 
+                    value_name='Quantidade de Produtos Vendidos')
+
+# Dividir a coluna 'Diretor Comercial e Nível de Desconto' em duas colunas
+df_melted[['Diretor Comercial', 'Nível de Desconto']] = df_melted['Diretor Comercial e Nível de Desconto'].str.split(' ', 1, expand=True)
+
+# Eliminar a coluna 'Diretor Comercial e Nível de Desconto'
+df_melted.drop(columns='Diretor Comercial e Nível de Desconto', inplace=True)
+
+# Exibir a tabela verticalizada
+print(df_melted)
